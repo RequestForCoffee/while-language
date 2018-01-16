@@ -1,9 +1,13 @@
 %{
 #include <string>
 #include "while.tab.h"
-#define SAVE_TOKEN yylval.string = new std::string(yytext, yyleng)
-#define TOKEN(t) (yylval.token = t)
+
+#define YY_DECL extern "C" int yylex()
+
+using namespace std; // unneeded?
+
 extern "C" int yywrap() { }
+
 %}
 
 DIGIT [0-9]

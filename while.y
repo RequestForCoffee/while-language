@@ -1,3 +1,16 @@
+%{
+#include <cstdio> // unneeded?
+#include <iostream>
+
+using namespace std; // unneeded?
+
+extern "C" int yylex();
+extern "C" int yyparse();
+extern "C" FILE *yyin;
+
+void yyerror(char *s);
+%}
+
 %start statements
 
 %token SKIP ASSIGN IF THEN ELSE WHILE DO
@@ -33,16 +46,20 @@ boolean: 'true'
 
 %%
 
-main (int argc, char *argv[])
-{
-    extern FILE *yyin;
-    ++argv; −−argc;
-    yyin = fopen(argv[0], ”r”);
-    yydebug = 1;
-    errors = 0;
-    yyparse ();
+int main(int argc, char *argv[]) {
+
+    FILE *myfile = fopen(argv[0], "r");
+    // make sure it's valid:
+    if (!myfile) {
+        return -1;
+    }
+
+    yyin = myfile;
+
+    yylex();
 }
-yyerror (char *s) /* Called by yyparse on error */
+
+void yyerror(char *s)
 {
-    printf (”%s\n”, s);
+    printf("%s\n", s);
 }

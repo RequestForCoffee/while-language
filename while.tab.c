@@ -67,9 +67,23 @@
 
 /* Copy the first part of user declarations.  */
 
+/* Line 189 of yacc.c  */
+#line 1 "while.y"
+
+#include <cstdio> // unneeded?
+#include <iostream>
+
+using namespace std; // unneeded?
+
+extern "C" int yylex();
+extern "C" int yyparse();
+extern "C" FILE *yyin;
+
+void yyerror(char *s);
+
 
 /* Line 189 of yacc.c  */
-#line 73 "while.tab.c"
+#line 87 "while.tab.c"
 
 /* Enabling traces.  */
 #ifndef YYDEBUG
@@ -126,7 +140,7 @@ typedef int YYSTYPE;
 
 
 /* Line 264 of yacc.c  */
-#line 130 "while.tab.c"
+#line 144 "while.tab.c"
 
 #ifdef short
 # undef short
@@ -418,9 +432,9 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    11,    11,    12,    14,    15,    16,    17,    19,    20,
-      21,    22,    23,    24,    26,    27,    28,    29,    30,    31,
-      32
+       0,    24,    24,    25,    27,    28,    29,    30,    32,    33,
+      34,    35,    36,    37,    39,    40,    41,    42,    43,    44,
+      45
 };
 #endif
 
@@ -1353,7 +1367,7 @@ yyreduce:
       
 
 /* Line 1455 of yacc.c  */
-#line 1357 "while.tab.c"
+#line 1371 "while.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1565,20 +1579,24 @@ yyreturn:
 
 
 /* Line 1675 of yacc.c  */
-#line 34 "while.y"
+#line 47 "while.y"
 
 
-main (int argc, char *argv[])
-{
-    extern FILE *yyin;
-    ++argv; −−argc;
-    yyin = fopen(argv[0], ”r”);
-    yydebug = 1;
-    errors = 0;
-    yyparse ();
+int main(int argc, char *argv[]) {
+
+    FILE *myfile = fopen(argv[0], "r");
+    // make sure it's valid:
+    if (!myfile) {
+        return -1;
+    }
+
+    yyin = myfile;
+
+    yylex();
 }
-yyerror (char *s) /* Called by yyparse on error */
+
+void yyerror(char *s)
 {
-    printf (”%s\n”, s);
+    printf("%s\n", s);
 }
 

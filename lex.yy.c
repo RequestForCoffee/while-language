@@ -389,10 +389,14 @@ char *yytext;
 #line 2 "while.l"
 #include <string>
 #include "while.tab.h"
-#define SAVE_TOKEN yylval.string = new std::string(yytext, yyleng)
-#define TOKEN(t) (yylval.token = t)
+
+#define YY_DECL extern "C" int yylex()
+
+using namespace std; // unneeded?
+
 extern "C" int yywrap() { }
-#line 396 "lex.yy.c"
+
+#line 400 "lex.yy.c"
 
 /* Macros after this point can all be overridden by user definitions in
  * section 1.
@@ -543,10 +547,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
 
-#line 12 "while.l"
+#line 16 "while.l"
 
 
-#line 550 "lex.yy.c"
+#line 554 "lex.yy.c"
 
 	if ( yy_init )
 		{
@@ -631,85 +635,85 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 14 "while.l"
+#line 18 "while.l"
 { return(SKIP);       }
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 15 "while.l"
+#line 19 "while.l"
 { return(ASSIGN);     }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 16 "while.l"
+#line 20 "while.l"
 { return(IF);         }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 17 "while.l"
+#line 21 "while.l"
 { return(THEN);       }
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 18 "while.l"
+#line 22 "while.l"
 { return(ELSE);       }
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 19 "while.l"
+#line 23 "while.l"
 { return(WHILE);      }
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 20 "while.l"
+#line 24 "while.l"
 { return(DO);         }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 21 "while.l"
+#line 25 "while.l"
 { return(NUMBER);     }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 22 "while.l"
+#line 26 "while.l"
 { return(IDENTIFIER); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 23 "while.l"
+#line 27 "while.l"
 { return(EQ);         }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 24 "while.l"
+#line 28 "while.l"
 { return(LEQ);        }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 25 "while.l"
+#line 29 "while.l"
 { return(NOT);        }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 26 "while.l"
+#line 30 "while.l"
 { return(AND);        }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 27 "while.l"
+#line 31 "while.l"
 
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 28 "while.l"
+#line 32 "while.l"
 { return(yytext[0]);  }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 30 "while.l"
+#line 34 "while.l"
 ECHO;
 	YY_BREAK
-#line 713 "lex.yy.c"
+#line 717 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1595,5 +1599,5 @@ int main()
 	return 0;
 	}
 #endif
-#line 30 "while.l"
+#line 34 "while.l"
 
