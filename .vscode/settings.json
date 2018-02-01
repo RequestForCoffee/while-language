@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "*.tpl": "html",
+        "*.l": "c",
+        "xlocale": "c",
+        "ios": "c",
+        "xiosbase": "c"
+    }
+}
