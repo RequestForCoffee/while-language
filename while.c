@@ -137,7 +137,7 @@ ArithmeticExpression *BuildVariable(char *variableName)
     return result;
 }
 
-ArithmeticExpression *BuildInfixArithmeticOp(ArithmeticExpression *left, ArithmeticExpression *right, ArithmeticExpressionType type)
+static ArithmeticExpression *BuildInfixArithmeticOp(ArithmeticExpression *left, ArithmeticExpression *right, ArithmeticExpressionType type)
 {
     ArithmeticExpression *result = (ArithmeticExpression *)malloc(sizeof(ArithmeticExpression));
     if (NULL == result)
@@ -206,7 +206,7 @@ BooleanExpression *BuildBooleanLiteral(int booleanLiteral)
     return result;
 }
 
-BooleanExpression *BuildArithmeticComparison(ArithmeticExpression *left, ArithmeticExpression* right, BooleanExpressionType type)
+static BooleanExpression *BuildArithmeticComparison(ArithmeticExpression *left, ArithmeticExpression* right, BooleanExpressionType type)
 {
     BooleanExpression *result = (BooleanExpression *)malloc(sizeof(BooleanExpression));
     if (NULL == result)

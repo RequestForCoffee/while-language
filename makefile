@@ -1,11 +1,19 @@
-while.tab.c while.tab.h: while.y
-	bison -vd while.y
+# Makefile
 
-lex.yy.c: while.l while.tab.h
-	flex while.l
+CC	= g++
+CFLAGS	= -g -ansi
+FILES	= lexer.c parser.c while.c main.c
 
-while: lex.yy.c while.tab.c while.tab.h
-	g++ while.c while.tab.c lex.yy.c -o whilec
+while:	$(FILES)
+		$(CC) $(CFLAGS) $(FILES) -o whilec
 
-w: while.c
-	g++ while.c -o whilebase
+lexer.c:	while.l 
+		win_flex while.l
+
+parser.c:	while.y lexer.c
+		win_bison -vd while.y
+
+# Disable default .c targets
+%.c: %.y
+
+%.c: %.l

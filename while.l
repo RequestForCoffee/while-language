@@ -1,14 +1,13 @@
 %{
-#include <string>
-#include "while.tab.h"
-
-#define YY_DECL extern "C" int yylex()
-
-using namespace std; // unneeded?
-
-extern "C" int yywrap() { }
+#include "while.h"
+#include "parser.h"
 
 %}
+
+%option outfile="lexer.c" header-file="lexer.h"
+
+%option reentrant noyywrap never-interactive nounistd
+%option bison-bridge
 
 DIGIT [0-9]
 ID [a-z][a-z0-9]*
@@ -22,13 +21,17 @@ then                    { return(THEN);       }
 else                    { return(ELSE);       }
 while                   { return(WHILE);      }
 do                      { return(DO);         }
-{DIGIT}+                { return(NUMBER);     }
-{ID}                    { return(IDENTIFIER); }
+{DIGIT}+                { sscanf(yytext, "%d", &yylval->AExp->NumberLiteral); return(NUMBER); }
+{ID}                    { sscanf(yytext, "%s", &yylval->stmt->Variable); return(IDENTIFIER); }
 "="                     { return(EQ);         }
 "<="                    { return(LEQ);        }
 "!"                     { return(NOT);        }
 "&"                     { return(AND);        }
-[ \t\n]+
+[ \r\n\t]+
 .                       { return(yytext[0]);  }
 
 %%
+
+int yyerror(const char *msg) {
+    fprintf(stderr,"Error:%s\n",msg); return 0;
+}

@@ -4,6 +4,9 @@
         "*.l": "c",
         "xlocale": "c",
         "ios": "c",
-        "xiosbase": "c"
+        "xiosbase": "c",
+        "parser.h": "c",
+        "lexer.h": "c",
+        "while.h": "c"
     }
 }
