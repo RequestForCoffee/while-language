@@ -4,3 +4,7 @@ lexer.h
 lexer.c
 parser.h
 parser.c
+.vs/
+Debug/
+Release/
+x64/

@@ -1,7 +1,7 @@
 #include "while.h"
 
 #include <stdlib.h>
-
+#include <string.h>
 
 /*----------------------------------------------------------------------------*/
 // Function definitions
@@ -280,4 +280,15 @@ void DeleteBooleanExpression(BooleanExpression *expression)
     }
 
     free(expression);
+}
+
+/*----------------------------------------------------------------------------*/
+// Helper functions
+/*----------------------------------------------------------------------------*/
+
+void ReadString(char* source, char** target)
+{
+	*target = malloc(strlen(source) + 1);
+
+	strcpy(*target, source);
 }

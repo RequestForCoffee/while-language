@@ -2,7 +2,10 @@
 #include "parser.h"
 #include "lexer.h"
 
-int yyparse(Statement **expression, ArithmeticExpression **AExp, BooleanExpression **BExp, yyscan_t scanner);
+#include <stdio.h>
+
+int yyparse(Statement **program, yyscan_t scanner);
+
 
 Statement* ParseText(const char* text)
 {
@@ -17,7 +20,7 @@ Statement* ParseText(const char* text)
  
     state = yy_scan_string(text, scanner);
  
-    if (yyparse(&statement, NULL, NULL, scanner)) {
+    if (yyparse(&statement, scanner)) {
         // error parsing
         return NULL;
     }
@@ -33,11 +36,12 @@ Statement* ParseText(const char* text)
 int main()
 {
     Statement *program = NULL;
-    char test[] = "a = 1 + 2";
+    char test[] = "variable := 7;";
 
     program = ParseText(test);
 
-    DeleteStatement(program);
 
+
+    DeleteStatement(program);
     return 0;
 }
