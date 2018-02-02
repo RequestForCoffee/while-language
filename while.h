@@ -86,7 +86,7 @@ BooleanExpression *BuildNot(BooleanExpression *expression);
 BooleanExpression *BuildAnd(BooleanExpression *left, BooleanExpression* right);
 void DeleteBooleanExpression(BooleanExpression *expression);
 
-void ReadString(char* source, char* target);
+void ReadString(char* source, char** target);
 
 void EvaluateStatement(Statement* statement);
 int EvaluateArithmeticExpression(ArithmeticExpression *expression);

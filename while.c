@@ -288,7 +288,7 @@ void DeleteBooleanExpression(BooleanExpression *expression)
 
 void ReadString(char* source, char** target)
 {
-    *target = malloc(strlen(source) + 1);
+    *target = (char*)malloc(strlen(source) + 1);
 
     strcpy(*target, source);
 }
@@ -301,7 +301,7 @@ void ReadString(char* source, char** target)
 void EvaluateStatement(Statement* statement)
 {
     if (NULL == statement)
-        return NULL;
+        return;
 
     int value = 0;
     switch (statement->Type)
