@@ -170,21 +170,21 @@ void DeleteArithmeticExpression(ArithmeticExpression *expression)
     if (NULL == expression)
         return;
 
-    switch(expression->Type)
+    switch (expression->Type)
     {
-        case Number:
-            break;
+    case Number:
+        break;
 
-        case Variable:
-            free(expression->Variable);
-            break;
+    case Variable:
+        free(expression->Variable);
+        break;
 
-        case Sum:
-        case Difference:
-        case Product:
-            DeleteArithmeticExpression(expression->Left);
-            DeleteArithmeticExpression(expression->Right);
-            break;
+    case Sum:
+    case Difference:
+    case Product:
+        DeleteArithmeticExpression(expression->Left);
+        DeleteArithmeticExpression(expression->Right);
+        break;
     }
 
     free(expression);
@@ -259,24 +259,24 @@ void DeleteBooleanExpression(BooleanExpression *expression)
     if (NULL == expression)
         return;
 
-    switch(expression->Type)
+    switch (expression->Type)
     {
-        case BooleanLiteral:
-            break;
+    case BooleanLiteral:
+        break;
 
-        case Equals:
-        case LessThanOrEqualTo:
-            DeleteArithmeticExpression(expression->ArithmeticLeft);
-            DeleteArithmeticExpression(expression->ArithmeticRight);
-            break;
+    case Equals:
+    case LessThanOrEqualTo:
+        DeleteArithmeticExpression(expression->ArithmeticLeft);
+        DeleteArithmeticExpression(expression->ArithmeticRight);
+        break;
 
-        case Not:
-            DeleteBooleanExpression(expression->Left);
-            break;
-        case And:
-            DeleteBooleanExpression(expression->Left);
-            DeleteBooleanExpression(expression->Right);
-            break;
+    case Not:
+        DeleteBooleanExpression(expression->Left);
+        break;
+    case And:
+        DeleteBooleanExpression(expression->Left);
+        DeleteBooleanExpression(expression->Right);
+        break;
     }
 
     free(expression);
@@ -288,7 +288,116 @@ void DeleteBooleanExpression(BooleanExpression *expression)
 
 void ReadString(char* source, char** target)
 {
-	*target = malloc(strlen(source) + 1);
+    *target = malloc(strlen(source) + 1);
 
-	strcpy(*target, source);
+    strcpy(*target, source);
+}
+
+
+/*----------------------------------------------------------------------------*/
+// Evaluation functions
+/*----------------------------------------------------------------------------*/
+
+void EvaluateStatement(Statement* statement)
+{
+    if (NULL == statement)
+        return NULL;
+
+    int value = 0;
+    switch (statement->Type)
+    {
+    case Assignment:
+        value = EvaluateArithmeticExpression(statement->AssignmentValue);
+        // TODO: assign to variable (statement->Variable)
+        break;
+    case Sequence:
+        EvaluateStatement(statement->Left);
+        EvaluateStatement(statement->Right);
+        break;
+    case Conditional:
+        value = EvaluateBooleanExpression(statement->Condition);
+        if (0 != value)
+        {
+            EvaluateStatement(statement->Left);
+        }
+        break;
+    case Loop:
+        value = EvaluateBooleanExpression(statement->Condition);
+        while (0 != value)
+        {
+            EvaluateStatement(statement->Left);
+            value = EvaluateBooleanExpression(statement->Condition);
+        }
+        break;
+    case Skip:
+        break;
+    }
+}
+
+int EvaluateArithmeticExpression(ArithmeticExpression *expression)
+{
+    if (NULL == expression)
+        return 0;
+
+    int value = 0;
+
+    switch (expression->Type)
+    {
+    case Number:
+        value = expression->NumberLiteral;
+        break;
+    case Variable:
+        // TODO: retrieve the variable value
+        break;
+    case Sum:
+        value = EvaluateArithmeticExpression(expression->Left)
+            + EvaluateArithmeticExpression(expression->Right);
+        break;
+    case Difference:
+        value = EvaluateArithmeticExpression(expression->Left)
+            - EvaluateArithmeticExpression(expression->Right);
+        break;
+    case Product:
+        value = EvaluateArithmeticExpression(expression->Left)
+            * EvaluateArithmeticExpression(expression->Right);
+        break;
+    }
+
+    return value;
+}
+
+int EvaluateBooleanExpression(BooleanExpression *expression)
+{
+    if (NULL == expression)
+        return 0;
+
+    int value = 0;
+
+    switch (expression->Type)
+    {
+    case BooleanLiteral:
+        value = expression->BooleanLiteral;
+        break;
+    case Equals:
+        value = EvaluateArithmeticExpression(expression->ArithmeticLeft)
+            == EvaluateArithmeticExpression(expression->ArithmeticRight);
+        break;
+    case LessThanOrEqualTo:
+        value = EvaluateArithmeticExpression(expression->ArithmeticLeft)
+            <= EvaluateArithmeticExpression(expression->ArithmeticRight);
+        break;
+    case Not:
+        value = EvaluateBooleanExpression(expression->Left);
+        if (0 == value)
+            value = 1;
+        else
+            value = 0;
+        break;
+    case And:
+        value = EvaluateBooleanExpression(expression->Left)
+            && EvaluateBooleanExpression(expression->Right);
+        break;
+    }
+
+    return value;
 }

@@ -41,14 +41,14 @@ do                      { return(DO);    }
 {ID}                    { ReadString(yytext, &yylval->sval); return(TOKEN_IDENTIFIER); }
 
 {ASSIGN}                { return(TOKEN_ASSIGN); }
-													                                     
+
 {EQ}                    { return(TOKEN_EQ);  }
 {LEQ}                   { return(TOKEN_LEQ); }
 {NOT}                   { return(TOKEN_NOT); }
 {AND}                   { return(TOKEN_AND); }
-													                                     
-{WS}                    { }							                                     
-													                                     
+
+{WS}                    { }
+
 {PLUS}                  { return(TOKEN_PLUS);      }
 {MINUS}                 { return(TOKEN_MINUS);     }
 {MINUS}                 { return(TOKEN_MULTIPLY);  }

@@ -88,4 +88,8 @@ void DeleteBooleanExpression(BooleanExpression *expression);
 
 void ReadString(char* source, char* target);
 
+void EvaluateStatement(Statement* statement);
+int EvaluateArithmeticExpression(ArithmeticExpression *expression);
+int EvaluateBooleanExpression(BooleanExpression *expression);
+
 #endif
