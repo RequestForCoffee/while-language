@@ -40,7 +40,9 @@ int main()
 
     program = ParseText(test);
 
-
+    EvaluateStatement(program);
+    PrintState(stdout);
+    FreeMemory();
 
     DeleteStatement(program);
     return 0;

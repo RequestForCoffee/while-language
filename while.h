@@ -1,12 +1,14 @@
 #ifndef __WHILE_H__
 #define __WHILE_H__
 
+#include <stdio.h>
+
 /*----------------------------------------------------------------------------*/
 // Type declarations & definitions
 /*----------------------------------------------------------------------------*/
 typedef enum ArithmeticExpressionTypeEnum {
     Number,
-    Variable,
+    VariableEval,
     Sum,
     Difference,
     Product
@@ -87,6 +89,9 @@ BooleanExpression *BuildAnd(BooleanExpression *left, BooleanExpression* right);
 void DeleteBooleanExpression(BooleanExpression *expression);
 
 void ReadString(char* source, char** target);
+
+void PrintState(FILE *stream);
+void FreeMemory();
 
 void EvaluateStatement(Statement* statement);
 int EvaluateArithmeticExpression(ArithmeticExpression *expression);

@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 
 /*----------------------------------------------------------------------------*/
 // Function definitions
@@ -131,7 +132,7 @@ ArithmeticExpression *BuildVariable(char *variableName)
     if (NULL == result)
         exit(-1);
 
-    result->Type = Variable;
+    result->Type = VariableEval;
     result->Variable = variableName;
 
     return result;
@@ -175,7 +176,7 @@ void DeleteArithmeticExpression(ArithmeticExpression *expression)
     case Number:
         break;
 
-    case Variable:
+    case VariableEval:
         free(expression->Variable);
         break;
 
@@ -293,6 +294,91 @@ void ReadString(char* source, char** target)
     strcpy(*target, source);
 }
 
+typedef struct VariableStruct Variable;
+
+struct VariableStruct {
+    char* Name;
+    int Value;
+    Variable* Next;
+};
+
+Variable* Memory;
+
+Variable* CreateVariable(char* name)
+{
+    Variable* result = (Variable*)malloc(sizeof(Variable));
+    if (NULL == result)
+        exit(-1);
+
+    result->Name = (char*)malloc(strlen(name) + 1);
+    if (NULL == result->Name)
+        exit(-1);
+
+    strcpy(result->Name, name);
+    result->Value = 0;
+    result->Next = NULL;
+
+    return result;
+}
+
+Variable* GetOrCreateVariable(char* name)
+{
+    if (NULL == Memory)
+    {
+        Memory = CreateVariable(name);
+
+        return Memory;
+    }
+    else
+    {
+        Variable *result = Memory;
+        while (NULL != result->Next)
+        {
+            if (0 == strcmp(result->Name, name))
+                return result;
+            result = result->Next;
+        }
+        if (0 == strcmp(result->Name, name))
+            return result;
+
+        result->Next = CreateVariable(name);
+        return result->Next;
+    }
+}
+
+int GetVariableValue(char* name)
+{
+    return GetOrCreateVariable(name)->Value;
+}
+
+void SetVariableValue(char* name, int value)
+{
+    GetOrCreateVariable(name)->Value = value;
+}
+
+void PrintState(FILE *stream)
+{
+    if (NULL == Memory)
+        return;
+
+    Variable *iterator = Memory;
+    while (NULL != iterator)
+    {
+        fprintf(stream, "[ %s -> %d ]\n", iterator->Name, iterator->Value);
+        iterator = iterator->Next;
+    }
+}
+
+void FreeMemory()
+{
+    Variable *iterator = Memory;
+    while (NULL != iterator)
+    {
+        Variable *temp = iterator;
+        iterator = iterator->Next;
+        free(temp);
+    }
+}
 
 /*----------------------------------------------------------------------------*/
 // Evaluation functions
@@ -308,7 +394,7 @@ void EvaluateStatement(Statement* statement)
     {
     case Assignment:
         value = EvaluateArithmeticExpression(statement->AssignmentValue);
-        // TODO: assign to variable (statement->Variable)
+        SetVariableValue(statement->Variable, value);
         break;
     case Sequence:
         EvaluateStatement(statement->Left);
@@ -346,8 +432,8 @@ int EvaluateArithmeticExpression(ArithmeticExpression *expression)
     case Number:
         value = expression->NumberLiteral;
         break;
-    case Variable:
-        // TODO: retrieve the variable value
+    case VariableEval:
+        value = GetVariableValue(expression->Variable);
         break;
     case Sum:
         value = EvaluateArithmeticExpression(expression->Left)

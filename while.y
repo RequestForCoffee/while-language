@@ -62,8 +62,8 @@ statement: TOKEN_IDENTIFIER TOKEN_ASSIGN expression { $$ = BuildAssignment($1, $
     | WHILE boolean DO '{' statements '}' { $$ = BuildLoop($5, $2); }
     ;
 
-expression: TOKEN_NUMBER { printf("%s", "no"); $$ = BuildNumber($1); }
-    | TOKEN_IDENTIFIER { printf("%s", "var"); $$ = BuildVariable($1); }
+expression: TOKEN_NUMBER { $$ = BuildNumber($1); }
+    | TOKEN_IDENTIFIER { $$ = BuildVariable($1); }
     | expression TOKEN_PLUS expression { $$ = BuildSum($1, $3); }
     | expression TOKEN_MINUS expression { $$ = BuildDifference($1, $3); }
     | expression TOKEN_MULTIPLY expression { $$ = BuildProduct($1, $3); }
