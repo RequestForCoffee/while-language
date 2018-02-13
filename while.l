@@ -21,6 +21,9 @@ PLUS "+"
 MINUS "-"
 MULTIPLY "*"
 
+LPAREN "("
+RPAREN ")"
+
 SEMICOLON ";"
 
 WS [ \r\n\t]+
@@ -36,6 +39,9 @@ then                    { return(THEN);  }
 else                    { return(ELSE);  }
 while                   { return(WHILE); }
 do                      { return(DO);    }
+
+true                    { return(TRUE);  }
+false                   { return(FALSE); }
 
 {DIGIT}+                { sscanf(yytext, "%d", &yylval->ival); return(TOKEN_NUMBER);   }
 {ID}                    { ReadString(yytext, &yylval->sval); return(TOKEN_IDENTIFIER); }
@@ -53,6 +59,8 @@ do                      { return(DO);    }
 {MINUS}                 { return(TOKEN_MINUS);     }
 {MINUS}                 { return(TOKEN_MULTIPLY);  }
 
+{LPAREN}                { return(TOKEN_LPAREN);    }
+{RPAREN}                { return(TOKEN_RPAREN);    }
 
 {SEMICOLON}             { return(TOKEN_SEMICOLON); }
 
