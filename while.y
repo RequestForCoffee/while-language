@@ -4,7 +4,7 @@
 #include "lexer.h"
 
 int yyerror(Statement **statement, yyscan_t scanner, const char *msg) {
-    printf("%s", msg);
+    printf("Error: %s\n", msg);
 	return 0;
 }
 %}
@@ -22,6 +22,9 @@ typedef void* yyscan_t;
 %defines "parser.h"
 
 %define api.pure
+
+%error-verbose
+
 %lex-param   { yyscan_t scanner }
 %parse-param { Statement **program }
 %parse-param { yyscan_t scanner }
@@ -35,7 +38,7 @@ typedef void* yyscan_t;
 }
 
 
-%type <stmt> block statements statement
+%type <stmt> block enclosedblock statements statement
 %type <AExp> expression
 %type <BExp> boolean
 
@@ -61,32 +64,35 @@ block: /* empty */ { $$ = NULL; }
     | statements { $$ = $1; }
     | statements TOKEN_SEMICOLON { $$ = $1; }
 
+enclosedblock: statement[S] { $$ = $S; }
+    | TOKEN_LPAREN block[B] TOKEN_RPAREN { $$ = $B; }
+
 /* A statement sequence is either a single statement, or a sequence followed by a statement */
 statements: statement { $$ = $1; }
     | statements TOKEN_SEMICOLON statement { $$ = BuildStatementSequence($1, $3); }
     ;
 
-statement: TOKEN_IDENTIFIER TOKEN_ASSIGN expression { $$ = BuildAssignment($1, $3); }
-    | SKIP { $$ = BuildSkip(); }
-    | IF boolean THEN TOKEN_LPAREN block TOKEN_RPAREN ELSE TOKEN_LPAREN block TOKEN_RPAREN { $$ = BuildConditional($5, $9, $2); }
-    | WHILE boolean DO TOKEN_LPAREN block TOKEN_RPAREN { $$ = BuildLoop($5, $2); }
+statement: TOKEN_IDENTIFIER[V] TOKEN_ASSIGN expression[E] { $$ = BuildAssignment($V, $E); } /* [V]ariable := [E]xpression */
+    | SKIP { $$ = BuildSkip(); } /* do nothing */
+    | IF boolean[C] THEN enclosedblock[T] ELSE enclosedblock[F] { $$ = BuildConditional($T, $F, $C); } /* if [C]ondition then (block if [T]rue) else (block if [F]alse) */
+    | WHILE boolean[C] DO enclosedblock[B] { $$ = BuildLoop($B, $C); } /* while [C]ondition execute [B]ody */
     ;
 
-expression: TOKEN_NUMBER { $$ = BuildNumber($1); }
-    | TOKEN_IDENTIFIER { $$ = BuildVariable($1); }
-    | expression TOKEN_PLUS expression { $$ = BuildSum($1, $3); }
-    | expression TOKEN_MINUS expression { $$ = BuildDifference($1, $3); }
-    | expression TOKEN_MULTIPLY expression { $$ = BuildProduct($1, $3); }
-    | TOKEN_LPAREN expression TOKEN_RPAREN { $$ = $2; }
+expression: TOKEN_NUMBER[N] { $$ = BuildNumber($N); } /* [N]umber literal */ 
+    | TOKEN_IDENTIFIER[V] { $$ = BuildVariable($V); } /* [V]ariable */
+    | expression[L] TOKEN_PLUS expression[R] { $$ = BuildSum($L, $R); } /* [L]eft + [R]ight */
+    | expression[L] TOKEN_MINUS expression[R] { $$ = BuildDifference($L, $R); } /* [L]eft - [R]ight */
+    | expression[L] TOKEN_MULTIPLY expression[R] { $$ = BuildProduct($L, $R); } /* [L]eft * [R]ight */
+    | TOKEN_LPAREN expression[E] TOKEN_RPAREN { $$ = $E; } /* ([E]xpression) */
     ;
 
-boolean: TRUE { $$ = BuildBooleanLiteral(1); }
-    | FALSE { $$ = BuildBooleanLiteral(0); }
-    | expression TOKEN_EQ expression { $$ = BuildEquals($1, $3); }
-    | expression TOKEN_LEQ expression { $$ = BuildLessThanOrEqualTo($1, $3); }
-    | TOKEN_NOT boolean { $$ = BuildNot($2); }
-    | boolean TOKEN_AND boolean { $$ = BuildAnd($1, $3); }
-    | TOKEN_LPAREN boolean TOKEN_RPAREN { $$ = $2; }
+boolean: TRUE { $$ = BuildBooleanLiteral(1); } /* literal true */
+    | FALSE { $$ = BuildBooleanLiteral(0); } /* literal false */
+    | expression[L] TOKEN_EQ expression[R] { $$ = BuildEquals($L, $R); } /* [L]eft eq [R]ight */
+    | expression[L] TOKEN_LEQ expression[R] { $$ = BuildLessThanOrEqualTo($L, $R); } /* [L]eft leq [R]ight */
+    | TOKEN_NOT boolean[B] { $$ = BuildNot($B); }  /* not [B]oolean */
+    | boolean TOKEN_AND boolean { $$ = BuildAnd($1, $3); } /* [B]oolean and [B]oolean */
+    | TOKEN_LPAREN boolean TOKEN_RPAREN { $$ = $2; } /* ([B]oolean) */
     ;
 
 %%

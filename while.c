@@ -4,6 +4,10 @@
 #include <string.h>
 #include <stdio.h>
 
+#ifndef PRINT_AST_INDENT_STEP
+#define PRINT_AST_INDENT_STEP 4
+#endif
+
 /*----------------------------------------------------------------------------*/
 // Function definitions
 /*----------------------------------------------------------------------------*/
@@ -369,6 +373,115 @@ void PrintState(FILE *stream)
     }
 }
 
+void PrintTree(FILE* stream, Statement* statement, int indent)
+{
+    if (NULL == statement)
+        return;
+
+    switch (statement->Type)
+    {
+    case Assignment:
+        fprintf(stream, "%*sAssignment:\n", indent, "");
+        fprintf(stream, "%*s%s\n", indent + PRINT_AST_INDENT_STEP * 2, "",
+            statement->Variable);
+        fprintf(stream, "%*s:=\n", indent + PRINT_AST_INDENT_STEP, "");
+        PrintArithmeticExpression(stream, statement->AssignmentValue, indent + PRINT_AST_INDENT_STEP * 2);
+        break;
+    case Sequence:
+        fprintf(stream, "%*sSequence:\n", indent, "");
+        PrintTree(stream, statement->Left, indent + PRINT_AST_INDENT_STEP);
+        PrintTree(stream, statement->Right, indent + PRINT_AST_INDENT_STEP);
+        break;
+    case Conditional:
+        fprintf(stream, "%*sConditional statement:\n", indent, "");
+        fprintf(stream, "%*sif:\n", indent + PRINT_AST_INDENT_STEP, "");
+        PrintBooleanExpression(stream, statement->Condition, indent + PRINT_AST_INDENT_STEP);
+        fprintf(stream, "%*sthen:\n", indent + PRINT_AST_INDENT_STEP, "");
+        PrintTree(stream, statement->Left, indent + PRINT_AST_INDENT_STEP);
+        fprintf(stream, "%*selse:\n", indent + PRINT_AST_INDENT_STEP, "");
+        PrintTree(stream, statement->Right, indent + PRINT_AST_INDENT_STEP);
+        break;
+    case Loop:
+        fprintf(stream, "%*sLoop:\n", indent, "");
+        fprintf(stream, "%*swhile:\n", indent + PRINT_AST_INDENT_STEP, "");
+        PrintBooleanExpression(stream, statement->Condition, indent + PRINT_AST_INDENT_STEP);
+        fprintf(stream, "%*sdo:\n", indent + PRINT_AST_INDENT_STEP, "");
+        PrintTree(stream, statement->Left, indent + PRINT_AST_INDENT_STEP);
+        break;
+    case Skip:
+        fprintf(stream, "%*sSkip\n", indent, "");
+        break;
+    }
+}
+
+void PrintArithmeticExpression(FILE* stream, ArithmeticExpression *expression, int indent)
+{
+    if (NULL == expression)
+        return;
+
+    switch (expression->Type)
+    {
+    case Number:
+        fprintf(stream, "%*s%d\n", indent, "", expression->NumberLiteral);
+        break;
+    case VariableEval:
+        fprintf(stream, "%*s%s\n", indent, "", expression->Variable);
+        break;
+    case Sum:
+        PrintArithmeticExpression(stream, expression->Left, indent + PRINT_AST_INDENT_STEP);
+        fprintf(stream, "%*s+\n", indent, "");
+        PrintArithmeticExpression(stream, expression->Right, indent + PRINT_AST_INDENT_STEP);
+        break;
+    case Difference:
+        PrintArithmeticExpression(stream, expression->Left, indent + PRINT_AST_INDENT_STEP);
+        fprintf(stream, "%*s-\n", indent, "");
+        PrintArithmeticExpression(stream, expression->Right, indent + PRINT_AST_INDENT_STEP);
+        break;
+    case Product:
+        PrintArithmeticExpression(stream, expression->Left, indent + PRINT_AST_INDENT_STEP);
+        fprintf(stream, "%*s*\n", indent, "");
+        PrintArithmeticExpression(stream, expression->Right, indent + PRINT_AST_INDENT_STEP);
+        break;
+    }
+}
+
+void PrintBooleanExpression(FILE* stream, BooleanExpression *expression, int indent)
+{
+    if (NULL == expression)
+        return;
+
+    switch (expression->Type)
+    {
+    case BooleanLiteral:
+        fprintf(stream, "%*s%s\n", indent, "", expression->BooleanLiteral ? "TRUE" : "FALSE");
+        break;
+    case Equals:
+        PrintArithmeticExpression(stream, expression->ArithmeticLeft, indent + PRINT_AST_INDENT_STEP);
+        fprintf(stream, "%*s==\n", indent, "");
+        PrintArithmeticExpression(stream, expression->ArithmeticRight, indent + PRINT_AST_INDENT_STEP);
+        break;
+    case LessThanOrEqualTo:
+        PrintArithmeticExpression(stream, expression->ArithmeticLeft, indent + PRINT_AST_INDENT_STEP);
+        fprintf(stream, "%*s<=\n", indent, "");
+        PrintArithmeticExpression(stream, expression->ArithmeticRight, indent + PRINT_AST_INDENT_STEP);
+        break;
+    case Not:
+        fprintf(stream, "%*s!\n", indent, "");
+        PrintBooleanExpression(stream, expression->Left, indent + PRINT_AST_INDENT_STEP);
+        break;
+    case And:
+        PrintBooleanExpression(stream, expression->Left, indent + PRINT_AST_INDENT_STEP);
+        fprintf(stream, "%*s&&\n", indent, "");
+        PrintBooleanExpression(stream, expression->Right, indent + PRINT_AST_INDENT_STEP);
+        break;
+    }
+}
+
+void PrintAST(FILE* stream, Statement* statement)
+{
+    PrintTree(stream, statement, 0);
+}
+
 void FreeMemory()
 {
     Variable *iterator = Memory;
@@ -405,6 +518,10 @@ void EvaluateStatement(Statement* statement)
         if (0 != value)
         {
             EvaluateStatement(statement->Left);
+        }
+        else
+        {
+            EvaluateStatement(statement->Right);
         }
         break;
     case Loop:

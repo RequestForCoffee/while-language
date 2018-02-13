@@ -57,7 +57,7 @@ false                   { return(FALSE); }
 
 {PLUS}                  { return(TOKEN_PLUS);      }
 {MINUS}                 { return(TOKEN_MINUS);     }
-{MINUS}                 { return(TOKEN_MULTIPLY);  }
+{MULTIPLY}              { return(TOKEN_MULTIPLY);  }
 
 {LPAREN}                { return(TOKEN_LPAREN);    }
 {RPAREN}                { return(TOKEN_RPAREN);    }

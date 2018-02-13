@@ -4,18 +4,20 @@ CC	= g++
 CFLAGS	= -g -ansi
 FILES	= lexer.c parser.c while.c main.c
 BISONFLAGS	= -vd --debug
+FLEX = win_flex
+BISON = win_bison
 
 while:	$(FILES)
-		$(CC) $(CFLAGS) $(FILES) -o whilec
+		$(CC) $(CFLAGS) $(FILES) -o while
 
 lexer.c:	while.l 
-		win_flex while.l
+		$(FLEX) while.l
 
 parser.c:	while.y lexer.c
-		win_bison $(BISONFLAGS) --debug while.y
+		$(BISON) $(BISONFLAGS) --debug while.y
 
 clean:
-		del lexer.h lexer.c parser.c parser.h whilec.exe
+		del lexer.h lexer.c parser.c parser.h while.exe
 
 # Disable default .c targets
 %.c: %.y

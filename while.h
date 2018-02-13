@@ -91,6 +91,10 @@ void DeleteBooleanExpression(BooleanExpression *expression);
 void ReadString(char* source, char** target);
 
 void PrintState(FILE *stream);
+void PrintAST(FILE* stream, Statement *statement);
+void PrintArithmeticExpression(FILE* stream, ArithmeticExpression *expression, int indent);
+void PrintBooleanExpression(FILE* stream, BooleanExpression *expression, int indent);
+
 void FreeMemory();
 
 void EvaluateStatement(Statement* statement);
