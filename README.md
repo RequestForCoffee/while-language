@@ -14,6 +14,10 @@ Variables need not be initialized explicitly; referencing a variable without ini
 
 At the end of the execution, all of the initialized variables will be printed out together with their corresponding values.
 
+# Download
+
+Please visit the [Releases](https://github.com/RequestForCoffee/while-language/releases) page to download the compiled binaries for UNIX and Windows.
+
 # Building
 
 On Windows, an installation of winflexbison and MinGW is required (it can be obtained using chocolatey or installed manually). The project can then be built and debugged through Visual Studio.
