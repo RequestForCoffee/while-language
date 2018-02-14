@@ -4,6 +4,7 @@ CC	= g++
 CFLAGS	= -g -ansi
 FILES	= lexer.c parser.c while.c main.c
 BISONFLAGS	= -vd --debug
+# Change to flex & bison if building on UNIX
 FLEX = win_flex
 BISON = win_bison
 
