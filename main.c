@@ -31,7 +31,7 @@ SOFTWARE.
 /*----------------------------------------------------------------------------*/
 // Constants and configuration
 /*----------------------------------------------------------------------------*/
-const char* VersionString = "1.0";
+const char* VersionString = "1.1";
 
 /*----------------------------------------------------------------------------*/
 // Type declarations
@@ -68,6 +68,8 @@ int main(int argc, char* argv[])
     printf("Parsing '%s'...\n", opts.FileName);
     program = ParseFile(opts.File);
     fclose(opts.File);
+    if (NULL == program)
+        exit(0);
 
     if (opts.PrintAST)
     {
@@ -164,6 +166,11 @@ int ParseCLIArgs(CLIOptions* opts, int count, char* args[])
         }
     }
 
+    if (NULL == opts->File)
+    {
+        printf("Error: no source file specified.");
+        return -2;
+    }
     return 0;
 }
 

@@ -20,11 +20,13 @@ Please visit the [Releases](https://github.com/RequestForCoffee/while-language/r
 
 # Building
 
-On Windows, an installation of winflexbison and MinGW is required (it can be obtained using chocolatey or installed manually). The project can then be built and debugged through Visual Studio.
+On Windows, an installation of winflexbison3 and MinGW is required (it can be obtained using chocolatey or installed manually). The project can then be built and debugged through Visual Studio.
 
-Alternatively, it can be built through Make (both on Windows and UNIX).
+Alternatively, it can be built through Make (both on Windows and UNIX), given flex & bison binaries are available in system PATH.
 
-**NOTE: if building on UNIX, the makefile needs to be changed to use flex & bison instead of win_flex and win_bison.**
+**NOTE: the current Visual Studio project configuration looks for winflexbison3 under the default Chocolatey installation directory.**
+
+**NOTE 2: if building on UNIX, the makefile needs to be changed to use flex & bison instead of win_flex and win_bison.**
 
 # Disclaimer
 
