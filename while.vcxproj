@@ -81,7 +81,9 @@
     <ClCompile Include="while.c" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="LICENSE" />
     <None Include="makefile" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lexer.h" />
